@@ -280,6 +280,9 @@ class TestDistBase(unittest.TestCase):
         elif col_type == "reduce":
             need_result = input1 + input2
             np.testing.assert_allclose(tr1_out[0], need_result, rtol=1e-05)
+        elif col_type == "reduce_max":
+            need_result = np.maximum(input1, input2)
+            np.testing.assert_allclose(tr1_out[0], need_result, rtol=1e-05)
         elif col_type == "scatter":
             need_result = input2
             need_result1 = need_result[0 : need_result.shape[0] // 2]
