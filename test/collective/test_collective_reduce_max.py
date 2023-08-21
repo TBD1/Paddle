@@ -29,7 +29,9 @@ class TestCReduceMaxOp(TestDistBase):
         self.check_with_place("collective_reduce_max_op.py", "reduce_max")
 
     def test_reduce_calc_stream(self):
-        self.check_with_place("collective_reduce_max_op_calc_stream.py", "reduce_max")
+        self.check_with_place(
+            "collective_reduce_max_op_calc_stream.py", "reduce_max"
+        )
 
 
 if __name__ == '__main__':
