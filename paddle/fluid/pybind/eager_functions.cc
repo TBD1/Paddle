@@ -559,15 +559,7 @@ PyObject* eager_api_run_custom_op(PyObject* self,
     // Parse op_type first, so that use i + 1
     PyObject* obj = PyTuple_GET_ITEM(args, i + 1);
     // Emplace Py_None from python, this means optional inputs passed to C++,
-    // use one un-initialized tensor to indicate both Tensor and
-    // vector<Tensor> inputs.
-    if (obj == Py_None) {
-      VLOG(7) << "Custom operator add input " << input
-              << " to CustomOpKernelContext. Add un-initialized tensor "
-                 "because the optional input is None";
-      ctx.EmplaceBackInput(paddle::Tensor());
-      continue;
-    }
+    // use an empty tensor to indicate both Tensor and vector<Tensor> inputs.
     if (paddle::framework::detail::IsDuplicableVar(input)) {
       std::vector<paddle::Tensor> tensors =
           CastPyArg2VectorOfTensor(obj, i + 1);
@@ -576,6 +568,13 @@ PyObject* eager_api_run_custom_op(PyObject* self,
               << " to CustomOpKernelContext. Add vector<Tensor> size = "
               << ctx.InputRangeAt(i).second - ctx.InputRangeAt(i).first;
     } else {
+      if (obj == Py_None) {
+        VLOG(7) << "Custom operator add input " << input
+                << " to CustomOpKernelContext. Add an empty tensor "
+                  "because the optional input is None";
+        ctx.EmplaceBackInput(InitializedEmptyTensor());
+        continue;
+      }
       const paddle::Tensor& tensor = CastPyArg2Tensor(obj, i + 1);  // NOLINT
       ctx.EmplaceBackInput(tensor);
       VLOG(7) << "Custom operator add input " << input
@@ -592,13 +591,12 @@ PyObject* eager_api_run_custom_op(PyObject* self,
       // Parse op_type first, so that use i + 1
       PyObject* obj = PyTuple_GET_ITEM(args, i + 1);
       // Emplace Py_None from python, this means optional inputs passed to C++,
-      // use one un-initialized tensor to indicate both Tensor and
-      // vector<Tensor> inputs.
+      // use an empty tensor to indicate both Tensor and vector<Tensor> inputs.
       if (obj == Py_None) {
         VLOG(7) << "Custom operator add input " << input
-                << " to CustomOpKernelContext. Add un-initialized tensor "
+                << " to CustomOpKernelContext. Add an empty tensor "
                    "because the optional input is None";
-        ctx.EmplaceBackInput(paddle::Tensor());
+        ctx.EmplaceBackInput(InitializedEmptyTensor());
         continue;
       }
       if (paddle::framework::detail::IsDuplicableVar(input)) {
@@ -609,6 +607,13 @@ PyObject* eager_api_run_custom_op(PyObject* self,
                 << " to CustomOpKernelContext. Add vector<Tensor> size = "
                 << ctx.InputRangeAt(i).second - ctx.InputRangeAt(i).first;
       } else {
+          if (obj == Py_None) {
+          VLOG(7) << "Custom operator add input " << input
+                  << " to CustomOpKernelContext. Add an empty tensor "
+                    "because the optional input is None";
+          ctx.EmplaceBackInput(InitializedEmptyTensor());
+          continue;
+        }
         paddle::Tensor& tensor = CastPyArg2Tensor(obj, i + 1);  // NOLINT
         ConvertAllInputsToDistTensor(mesh, tensor);
         ctx.EmplaceBackInput(tensor);

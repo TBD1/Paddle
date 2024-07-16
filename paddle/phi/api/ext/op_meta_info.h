@@ -231,16 +231,16 @@ struct KernelFuncImpl<Return (*)(Args...), impl_fn> {
     static void Compute(CustomOpKernelContext* ctx, PreviousArgs&... pargs) {
       auto& range = ctx->InputRangeAt(in_idx);
       auto& arg = ctx->InputAt(range.first);
-      if (!arg.is_initialized()) {
-        ComputeCallHelper<Tail...>::
-            template Compute<in_idx + 1, attr_idx, out_idx>(
-                ctx, pargs..., paddle::none);
-      } else {
-        ComputeCallHelper<
-            Tail...>::template Compute<in_idx + 1, attr_idx, out_idx>(ctx,
-                                                                      pargs...,
-                                                                      arg);
-      }
+      // if (!arg.is_initialized()) {
+      //   ComputeCallHelper<Tail...>::
+      //       template Compute<in_idx + 1, attr_idx, out_idx>(
+      //           ctx, pargs..., paddle::none);
+      // } else {
+      ComputeCallHelper<
+          Tail...>::template Compute<in_idx + 1, attr_idx, out_idx>(ctx,
+                                                                    pargs...,
+                                                                    arg);
+      // }
     }
   };
 
@@ -294,16 +294,16 @@ struct KernelFuncImpl<Return (*)(Args...), impl_fn> {
     static void Compute(CustomOpKernelContext* ctx, PreviousArgs&... pargs) {
       auto& range = ctx->InputRangeAt(in_idx);
       auto arg = ctx->InputsBetween(range.first, range.second);
-      if (arg.empty() || !arg[0].is_initialized()) {
-        ComputeCallHelper<Tail...>::
-            template Compute<in_idx + 1, attr_idx, out_idx>(
-                ctx, pargs..., paddle::none);
-      } else {
-        ComputeCallHelper<
-            Tail...>::template Compute<in_idx + 1, attr_idx, out_idx>(ctx,
-                                                                      pargs...,
-                                                                      arg);
-      }
+      // if (arg.empty() || !arg[0].is_initialized()) {
+      //   ComputeCallHelper<Tail...>::
+      //       template Compute<in_idx + 1, attr_idx, out_idx>(
+      //           ctx, pargs..., paddle::none);
+      // } else {
+      ComputeCallHelper<
+          Tail...>::template Compute<in_idx + 1, attr_idx, out_idx>(ctx,
+                                                                    pargs...,
+                                                                    arg);
+      // }
     }
   };
 
@@ -556,15 +556,15 @@ struct InferShapeFuncImpl<Return (*)(Args...), impl_fn> {
         const std::vector<paddle::any>& attrs,
         const PreviousArgs&... pargs) {
       const std::vector<int64_t>& arg = input_shapes[in_idx];
-      if (arg.empty()) {
-        return InferShapeCallHelper<Tail...>::
-            template InferShape<in_idx + 1, vec_in_idx, attr_idx>(
-                input_shapes, vec_input_shapes, attrs, pargs..., paddle::none);
-      } else {
-        return InferShapeCallHelper<Tail...>::
-            template InferShape<in_idx + 1, vec_in_idx, attr_idx>(
-                input_shapes, vec_input_shapes, attrs, pargs..., arg);
-      }
+      // if (arg.empty()) {
+      //   return InferShapeCallHelper<Tail...>::
+      //       template InferShape<in_idx + 1, vec_in_idx, attr_idx>(
+      //           input_shapes, vec_input_shapes, attrs, pargs..., paddle::none);
+      // } else {
+      return InferShapeCallHelper<Tail...>::
+          template InferShape<in_idx + 1, vec_in_idx, attr_idx>(
+              input_shapes, vec_input_shapes, attrs, pargs..., arg);
+      // }
     }
   };
 
@@ -583,15 +583,15 @@ struct InferShapeFuncImpl<Return (*)(Args...), impl_fn> {
         const PreviousArgs&... pargs) {
       const std::vector<std::vector<int64_t>>& arg =
           vec_input_shapes[vec_in_idx];
-      if (arg.empty()) {
-        return InferShapeCallHelper<Tail...>::
-            template InferShape<in_idx, vec_in_idx + 1, attr_idx>(
-                input_shapes, vec_input_shapes, attrs, pargs..., paddle::none);
-      } else {
-        return InferShapeCallHelper<Tail...>::
-            template InferShape<in_idx, vec_in_idx + 1, attr_idx>(
-                input_shapes, vec_input_shapes, attrs, pargs..., arg);
-      }
+      // if (arg.empty()) {
+      //   return InferShapeCallHelper<Tail...>::
+      //       template InferShape<in_idx, vec_in_idx + 1, attr_idx>(
+      //           input_shapes, vec_input_shapes, attrs, pargs..., paddle::none);
+      // } else {
+      return InferShapeCallHelper<Tail...>::
+          template InferShape<in_idx, vec_in_idx + 1, attr_idx>(
+              input_shapes, vec_input_shapes, attrs, pargs..., arg);
+      // }
     }
   };
 
@@ -749,15 +749,15 @@ struct InferDtypeFuncImpl<Return (*)(Args...), impl_fn> {
         const std::vector<paddle::any>& attrs,
         const PreviousArgs&... pargs) {
       const DataType& arg = input_dtypes[in_idx];
-      if (arg == DataType::UNDEFINED) {
-        return InferDtypeCallHelper<Tail...>::
-            template InferDtype<in_idx + 1, vec_in_idx, attr_idx>(
-                input_dtypes, vec_input_dtypes, attrs, pargs..., paddle::none);
-      } else {
-        return InferDtypeCallHelper<Tail...>::
-            template InferDtype<in_idx + 1, vec_in_idx, attr_idx>(
-                input_dtypes, vec_input_dtypes, attrs, pargs..., arg);
-      }
+      // if (arg == DataType::UNDEFINED) {
+      //   return InferDtypeCallHelper<Tail...>::
+      //       template InferDtype<in_idx + 1, vec_in_idx, attr_idx>(
+      //           input_dtypes, vec_input_dtypes, attrs, pargs..., paddle::none);
+      // } else {
+      return InferDtypeCallHelper<Tail...>::
+          template InferDtype<in_idx + 1, vec_in_idx, attr_idx>(
+              input_dtypes, vec_input_dtypes, attrs, pargs..., arg);
+      // }
     }
   };
 
@@ -774,15 +774,15 @@ struct InferDtypeFuncImpl<Return (*)(Args...), impl_fn> {
         const std::vector<paddle::any>& attrs,
         const PreviousArgs&... pargs) {
       const std::vector<DataType>& arg = vec_input_dtypes[vec_in_idx];
-      if (arg.empty()) {
-        return InferDtypeCallHelper<Tail...>::
-            template InferDtype<in_idx, vec_in_idx + 1, attr_idx>(
-                input_dtypes, vec_input_dtypes, attrs, pargs..., paddle::none);
-      } else {
-        return InferDtypeCallHelper<Tail...>::
-            template InferDtype<in_idx, vec_in_idx + 1, attr_idx>(
-                input_dtypes, vec_input_dtypes, attrs, pargs..., arg);
-      }
+      // if (arg.empty()) {
+      //   return InferDtypeCallHelper<Tail...>::
+      //       template InferDtype<in_idx, vec_in_idx + 1, attr_idx>(
+      //           input_dtypes, vec_input_dtypes, attrs, pargs..., paddle::none);
+      // } else {
+      return InferDtypeCallHelper<Tail...>::
+          template InferDtype<in_idx, vec_in_idx + 1, attr_idx>(
+              input_dtypes, vec_input_dtypes, attrs, pargs..., arg);
+      // }
     }
   };
 
